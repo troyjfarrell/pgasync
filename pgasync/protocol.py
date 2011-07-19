@@ -2,7 +2,10 @@
 """
 # System Imports
 from struct import *
-import md5
+try:
+	from hashlib import md5
+except ImportError:
+	import md5
 try:
 	import cStringIO as StringIO
 except:
@@ -131,7 +134,10 @@ class PgProtocol(CountTerminatedProtocol):
 		"""MD5 pass auth.
 		
 		md5hex(md5hex(password + user) + <salt given by backend>)."""
-		pw = "md5" + md5.new( md5.new(self.factory.password + self.factory.user).hexdigest() + data).hexdigest() + "\0"
+		if hasattr(md5, "new"):
+			pw = "md5" + md5.new( md5.new(self.factory.password + self.factory.user).hexdigest() + data).hexdigest() + "\0"
+		else:
+			pw = "md5" + md5( md5(self.factory.password + self.factory.user).hexdigest() + data).hexdigest() + "\0"
 		lpw = len(pw)
 		self.transport.write( pack("!sI%ss" % lpw,
 		'p',
