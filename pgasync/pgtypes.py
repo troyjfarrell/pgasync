@@ -177,7 +177,7 @@ class BOOL:
 from decimal import Decimal
 
 import locale
-_loc = locale.getdefaultlocale()[0]
+_loc = locale.getdefaultlocale()
 
 if _loc:
 	locale.setlocale(locale.LC_ALL, _loc)
